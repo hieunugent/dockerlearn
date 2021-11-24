@@ -32,3 +32,49 @@ docker run
 
 ```
 - in VS CODE extension run it on click
+## run multiple service with multiple container
+- using .yml extension for configue docker file
+- name this example as docker-compose.yml
+``` yaml
+version: "3.9"
+    
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:latest
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+    ports:
+      - "8000:80"
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+volumes:
+  db_data: {}
+  wordpress_data: {}
+```
+- run the compose file
+```ubuntu
+# run as a background task up 
+docker-compose up -d 
+# pull the task backdown
+docker-compose down
+```
+## deploy to docker hub
+- docker tag IMAGEID username/projectname:tagname
+- docker push username/projectname:tagname
